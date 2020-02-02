@@ -1,6 +1,3 @@
-from collections import defaultdict
-
-
 def solution(A):
 
     if not A:
@@ -13,34 +10,25 @@ def solution(A):
         starts.append(center - A[center])
         stops.append(center + A[center])
 
-    x0 = min(starts)
-    x1 = max(starts)
+    starts.sort()
+    stops.sort()
 
-    start_counts = defaultdict(int)
-    stop_counts = defaultdict(int)
-
-    for start in starts:
-        start_counts[start] += 1
-
-    for stop in stops:
-        stop_counts[stop] += 1
-
+    num_open = 0
     result = 0
-    opened = 0
-    for idx in range(x0, x1 + 1):
-        if start_counts[idx] > 0:
-            if opened > 0:
-                for _ in range(start_counts[idx]):
-                    result += opened
-                    opened += 1
-            else:
-                result += start_counts[idx] - 1
-                opened += start_counts[idx]
+    c_idx = 0
 
-            if result > 10_000_000:
-                return -1
+    for o_idx in range(len(starts)):
 
-        opened -= stop_counts[idx]
+        if starts[o_idx] > stops[c_idx]:
+            while stops[c_idx] < starts[o_idx]:
+                num_open -= 1
+                c_idx += 1
+
+        result += num_open
+        if result > 10_000_000:
+            return -1
+
+        num_open += 1
 
     return result
 
